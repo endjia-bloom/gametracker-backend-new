@@ -1,13 +1,14 @@
-// src/config/db.js
 const mongoose = require('mongoose');
 
 const connectDB = async () => {
   try {
-    const mongoURI = process.env.MONGO_URI;
-    if (!mongoURI) throw new Error('❌ No se encontró MONGO_URI en el archivo .env');
-
-    const conn = await mongoose.connect(mongoURI); // <-- sin opciones
-    console.log(`✅ MongoDB conectado: ${conn.connection.host}`);
+    const uri = process.env.MONGO_URI;
+    if (!uri) throw new Error('MONGO_URI no definido en .env');
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    });
+    console.log('📚 Conectado a MongoDB Atlas correctamente');
   } catch (error) {
     console.error('❌ Error al conectar a MongoDB:', error.message);
     process.exit(1);
