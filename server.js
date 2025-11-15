@@ -1,42 +1,24 @@
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const connectDB = require('./src/config/db');
-
-connectDB();
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const connectDB = require("./config/db");
 
 const app = express();
 
+// Middlewares
 app.use(cors());
-app.use(helmet());
-app.use(express.json({ limit: '10mb' }));
+app.use(express.json());
 
 // Rutas
-const gamesRoutes = require('./src/routes/games.routes');
-const reviewsRoutes = require('./src/routes/reviews.routes');
+app.use("/api/juegos", require("./src/routes/game"));
+app.use("/api/reviews", require("./src/routes/review"));
 
-// Ruta raíz
-app.get('/', (req, res) => {
-  res.send('🎮 API GameTracker funcionando correctamente!');
+app.get("/", (req, res) => {
+  res.send("API funcionando correctamente 🚀");
 });
 
-// Montar rutas
-app.use('/api/juegos', gamesRoutes);
-app.use('/api/resenas', reviewsRoutes);
-
-// 404
-app.use((req, res) => {
-  res.status(404).json({ message: 'Ruta no encontrada' });
-});
-
-// Error handler global
-app.use((err, req, res, next) => {
-  console.error('❌ Error en servidor:', err.stack || err);
-  res.status(500).json({ message: 'Error interno del servidor' });
-});
+// Conectar DB y levantar servidor
+connectDB();
 
 const PORT = process.env.PORT || 4000;
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor listo en http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Servidor corriendo en puerto ${PORT}`));
